@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Composer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #4895ef;
+      --dark: #1b263b;
+      --light: #f8f9fa;
+      --success: #4cc9f0;
+      --warning: #f8961e;
+      --danger: #f72585;
+      --gray: #adb5bd;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+    }
+    
+    h1 {
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 700;
+    }
+    
+    .description {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #555;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--dark);
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--gray);
+      border-radius: 5px;
+      font-size: 16px;
+      transition: border 0.3s;
+    }
+    
+    input[type="text"]:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+    
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+    }
+    
+    .checkbox-container input {
+      margin-right: 10px;
+    }
+    
+    .btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+      display: block;
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .btn:hover {
+      background-color: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .status {
+      margin-top: 25px;
+      padding: 15px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: 500;
+      display: none;
+    }
+    
+    .status.success {
+      background-color: rgba(76, 201, 240, 0.2);
+      color: #0a9396;
+      display: block;
+    }
+    
+    .status.error {
+      background-color: rgba(247, 37, 133, 0.2);
+      color: var(--danger);
+      display: block;
+    }
+    
+    .status.processing {
+      background-color: rgba(248, 150, 30, 0.2);
+      color: var(--warning);
+      display: block;
+    }
+    
+    .preview-container {
+      display: flex;
+      justify-content: space-between;
+      margin: 30px 0;
+      gap: 20px;
+    }
+    
+    .preview-box {
+      flex: 1;
+      border: 2px dashed var(--gray);
+      border-radius: 8px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f8f9fa;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .preview-box:hover {
+      border-color: var(--accent);
+    }
+    
+    .preview-box img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    
+    .preview-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 5px;
+      text-align: center;
+      font-size: 14px;
+    }
+    
+    .result-container {
+      margin-top: 30px;
+      display: none;
+    }
+    
+    .result-video {
+      width: 100%;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+    
+    .download-btn {
+      margin-top: 15px;
+      background-color: var(--success);
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+      
+      .preview-container {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Video Composer</h1>
+    <p class="description">Combine two YouTube videos - the first will be overlaid on top of the second</p>
+    
+    <div class="preview-container">
+      <div class="preview-box" id="preview1">
+        <span>First Video Preview</span>
+        <div class="preview-label">Overlay Video</div>
+      </div>
+      <div class="preview-box" id="preview2">
+        <span>Second Video Preview</span>
+        <div class="preview-label">Background Video</div>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="link1">First YouTube Video URL (Background)</label>
+      <input type="text" id="link1" placeholder="https://www.youtube.com/watch?v=..." oninput="updatePreview(1)">
+    </div>
+    
+    <div class="form-group">
+      <label for="link2">Second YouTube Video URL (Overlay)</label>
+      <input type="text" id="link2" placeholder="https://www.youtube.com/watch?v=..." oninput="updatePreview(2)">
+    </div>
+    
+    <div class="checkbox-container">
+      <input type="checkbox" id="split">
+      <label for="split">Split final video into 30-second parts</label>
+    </div>
+    
+    <button class="btn" onclick="sendLinks()" id="processBtn">
+      <span id="btnText">Process Videos</span>
+    </button>
+    
+    <div id="status" class="status"></div>
+    
+    <div class="result-container" id="resultContainer">
+      <h3>Your Combined Video</h3>
+      <video controls class="result-video" id="resultVideo"></video>
+      <button class="btn download-btn" id="downloadBtn">Download Video</button>
+    </div>
+  </div>
+
+  <script>
+    function updatePreview(videoNum) {
+      const link = document.getElementById(`link${videoNum}`).value.trim();
+      const previewBox = document.getElementById(`preview${videoNum}`);
+      
+      if (!link) {
+        previewBox.innerHTML = `<span>Video ${videoNum} Preview</span><div class="preview-label">${videoNum === 1 ? 'Background' : 'Overlay'} Video</div>`;
+        return;
+      }
+      
+      // Extract video ID for thumbnail
+      let videoId = '';
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = link.match(regExp);
+      
+      if (match && match[2].length === 11) {
+        videoId = match[2];
+        previewBox.innerHTML = `
+          <img src="https://img.youtube.com/vi/${videoId}/mqdefault.jpg" alt="Video thumbnail">
+          <div class="preview-label">${videoNum === 1 ? 'Background' : 'Overlay'} Video</div>
+        `;
+      } else {
+        previewBox.innerHTML = `<span>Invalid YouTube URL</span><div class="preview-label">${videoNum === 1 ? 'Background' : 'Overlay'} Video</div>`;
+      }
+    }
+
+    async function sendLinks() {
+      const link1 = document.getElementById("link1").value.trim();
+      const link2 = document.getElementById("link2").value.trim();
+      const split = document.getElementById("split").checked;
+      const statusEl = document.getElementById("status");
+      const btnText = document.getElementById("btnText");
+      const processBtn = document.getElementById("processBtn");
+      
+      if (!link1 || !link2) {
+        statusEl.innerText = "Please enter both video links.";
+        statusEl.className = "status error";
+        return;
+      }
+
+      // Show loading state
+      btnText.innerHTML = `<span class="loading"></span>Processing...`;
+      processBtn.disabled = true;
+      statusEl.innerText = "Processing your videos... This may take a few minutes depending on video lengths.";
+      statusEl.className = "status processing";
+      
+      try {
+        const res = await fetch("/process", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ link1, link2, split })
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || "Server error");
+        }
+
+        const data = await res.json();
+        statusEl.innerText = data.message || "Video processing complete!";
+        statusEl.className = "status success";
+        
+        // Show result if not split
+        if (!split && data.outputFile) {
+          const resultContainer = document.getElementById("resultContainer");
+          const resultVideo = document.getElementById("resultVideo");
+          const downloadBtn = document.getElementById("downloadBtn");
+          
+          resultVideo.src = data.outputFile;
+          resultContainer.style.display = "block";
+          
+          downloadBtn.onclick = () => {
+            window.location.href = data.outputFile;
+          };
+        }
+      } catch (e) {
+        statusEl.innerText = "Error: " + (e.message || "Failed to process videos");
+        statusEl.className = "status error";
+        console.error(e);
+      } finally {
+        btnText.textContent = "Process Videos";
+        processBtn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
